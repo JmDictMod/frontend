@@ -1,11 +1,10 @@
 @font-face {
-  font-family: 'HGSKyokashotai';
-  src: url('/fonts/_HGSKyokashotai.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: 'HGSKyokashotai'; /* Name you’ll use to reference the font */
+  src: url('./fonts/_HGSKyokashotai.ttf') format('truetype'); /* Path to the font file */
+  font-weight: normal; /* Adjust based on your font’s weight */
+  font-style: normal; /* Adjust based on your font’s style */
 }
 
-/* Apply the font globally */
 body {
   font-family: 'HGSKyokashotai', sans-serif;
 }

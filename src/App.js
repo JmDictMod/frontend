@@ -1,4 +1,3 @@
-import './index.css';
 import React, { useState } from "react";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/ResultsList";

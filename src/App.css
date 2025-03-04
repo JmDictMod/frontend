@@ -1,5 +1,5 @@
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'HGSKyokashotai', sans-serif;
   background-color: #f9f9f9;
   color: #333;
   margin: 0;
@@ -7,6 +7,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-size: 22px;
 }
 
 h1 {
@@ -72,12 +73,11 @@ button:hover {
 }
 
 ruby {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 56px;
 }
 
 rt {
-  font-size: 14px;
+  font-size: 24px;
   color: #007BFF;
 }
 
@@ -109,6 +109,7 @@ select {
 /* Added to give the result term and number some spacing */
 .term-with-furigana {
     margin-left: 5px;
+    font-size: 36px;
 }
 
 /* Style the Tags */
