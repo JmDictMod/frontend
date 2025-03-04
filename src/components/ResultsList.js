@@ -91,12 +91,28 @@ const SearchResults = ({ results }) => {
         <div id="search-results">
             <div className="results">
                 <p id="result-count">Found {filteredResults.length} result(s)</p>
-                <select value={selectedTag || ""} onChange={(e) => handleTagSelect(e.target.value || null)}>
-                    <option value="">All Tags</option>
-                    {Object.entries(tagCounts).map(([tag, count]) => (
-                        <option key={tag} value={tag}>{tag} ({count})</option>
-                    ))}
-                </select>
+                <select value={selectedTag || ""} onChange={(e) => handleTagSelect(e.target.value || null)} 
+        style={{ 
+            backgroundColor: "#fff", 
+            color: "#000", 
+            padding: "3px 8px", 
+            borderRadius: "4px", 
+            marginRight: "5px" 
+        }}>
+    <option value="">All Tags</option>
+    {Object.entries(tagCounts).map(([tag, count]) => {
+        // Find the tag object from the results to get the description
+        const tagDetails = results
+            .flatMap(entry => entry.tags)
+            .find(t => t.tag === tag);
+        const description = tagDetails ? tagDetails.description : "No description available";
+        return (
+            <option key={tag} value={tag}>
+                {`${tag} (${count}) - ${description}`}
+            </option>
+        );
+    })}
+</select>
                 <input
                     type="number"
                     value={itemsPerPage}
