@@ -112,38 +112,39 @@ const SearchResults = ({ results }) => {
                             <span className="result-number">{(currentPage - 1) * itemsPerPage + index + 1}. </span>
                             <span className="term-with-furigana">
                                 {entry.furigana ? (
-                                    entry.furigana.map((part, idx) => {
-                                        if (part.rt) {
-                                            const kanjiParts = part.ruby.split('').map((char, charIdx) => (
-                                                <span 
-                                                    key={`${idx}-${charIdx}`} 
-                                                    className="kanji-char" 
-                                                    onClick={(e) => handleKanjiClick(char, e)}
-                                                    style={{ cursor: 'pointer' }}
-                                                >
-                                                    {char}
-                                                </span>
-                                            ));
-                                            return (
-                                                <ruby key={idx}>
-                                                    {kanjiParts}
-                                                    <rt>{part.rt}</rt>
-                                                </ruby>
-                                            );
-                                        }
-                                        return part.ruby;
-                                    })
+                                    entry.furigana.map((part, idx) =>
+                                        part.rt ? (
+                                            <ruby key={idx}>
+                                                {part.ruby.split('').map((char, charIdx) => (
+                                                    <span 
+                                                        key={`${idx}-${charIdx}`} 
+                                                        className="kanji-char" 
+                                                        onClick={(e) => handleKanjiClick(char, e)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    >
+                                                        {char}
+                                                    </span>
+                                                ))}
+                                                <rt>{part.rt}</rt>
+                                            </ruby>
+                                        ) : (
+                                            part.ruby
+                                        )
+                                    )
                                 ) : (
-                                    entry.term.split('').map((char, charIdx) => (
-                                        <span 
-                                            key={charIdx} 
-                                            className="kanji-char" 
-                                            onClick={(e) => handleKanjiClick(char, e)}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            {char}
-                                        </span>
-                                    ))
+                                    <ruby>
+                                        {entry.term.split('').map((char, charIdx) => (
+                                            <span 
+                                                key={charIdx} 
+                                                className="kanji-char" 
+                                                onClick={(e) => handleKanjiClick(char, e)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                {char}
+                                            </span>
+                                        ))}
+                                        <rt>{entry.reading}</rt>
+                                    </ruby>
                                 )}
                             </span>
                             <ul className="meanings">
@@ -158,7 +159,7 @@ const SearchResults = ({ results }) => {
                                             key={idx} 
                                             className="tag" 
                                             title={tag.description}
-                                            style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: "3px 8px", borderRadius: "4px", marginRight: "5px" }}
+                                            style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
                                         >
                                             {tag.tag}
                                         </span>
