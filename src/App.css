@@ -1,0 +1,129 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 24px;
+  margin-top: 20px;
+  color: #222;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+input {
+  width: 250px;
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007BFF;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  margin-left: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#search-results {
+  width: 90%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.entry {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Modified Style to make it inline */
+.entry p {
+  margin: 5px 0;
+  font-size: 16px;
+  display: inline;   /* ADDED: Make the content to display on the same line */
+}
+
+ruby {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+rt {
+  font-size: 14px;
+  color: #007BFF;
+}
+
+
+select {
+  padding: 8px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Modified Id to display on top */
+#result-count {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;    /* Modified: increased the bottom margin so that it has space with the first result */
+  text-align: left; /* Added: Align text to the left */
+}
+
+/* Added class to display number in line with term */
+.result-number {
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* Added to give the result term and number some spacing */
+.term-with-furigana {
+    margin-left: 5px;
+}
+
+/* Style the Tags */
+.tags {
+  margin-top: 10px; /* added: space with results */
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-right: 5px;
+  font-size: 14px; /* added: styling */
+  color: #555; /* added: styling */
+  margin-bottom: 5px; /* added: spacing between the result term and the tags */
+  cursor: help; /* Added a pointer when hover around it. */
+}
