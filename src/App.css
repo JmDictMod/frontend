@@ -176,3 +176,13 @@ select {
   font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
 }
+.pagination {
+  background-color: #0D0D0D;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  color: rgb(1, 204, 255);
+  margin: 2px;
+  padding: 0;
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
+}

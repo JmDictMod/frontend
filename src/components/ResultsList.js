@@ -3,7 +3,8 @@ const SearchResults = ({ results }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [filteredResults, setFilteredResults] = useState(results);
     const [tagColors, setTagColors] = useState({});
-    // Function to count tag occurrences
+    const [itemsPerPage, setItemsPerPage] = useState(1000);
+    const [currentPage, setCurrentPage] = useState(1);
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
@@ -18,27 +19,20 @@ const SearchResults = ({ results }) => {
         setTagCounts(countTagOccurrences());
         setFilteredResults(results);
         setSelectedTag(null);
+        setCurrentPage(1);
     }, [results]);
-    // Function to handle tag selection
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
-        if (tag) {
-            const newFilteredResults = results.filter(entry =>
-                entry.tags.some(entryTag => entryTag.tag === tag)
-            );
-            setFilteredResults(newFilteredResults);
-        } else {
-            setFilteredResults(results);
-        }
+        setCurrentPage(1);
+        window.scrollTo(0, 0);
+        setFilteredResults(tag ? results.filter(entry => entry.tags.some(entryTag => entryTag.tag === tag)) : results);
     };
-    // Function to generate a random color for each tag
     const generateColor = (tag) => {
         let hash = 0;
         for (let i = 0; i < tag.length; i++) {
             hash = tag.charCodeAt(i) + ((hash << 5) - hash);
         }
-        const color = `hsl(${hash % 360}, 70%, 60%)`; // Generates a color in the HSL spectrum
-        return color;
+        return `hsl(${hash % 360}, 70%, 60%)`;
     };
     useEffect(() => {
         const colors = {};
@@ -47,44 +41,46 @@ const SearchResults = ({ results }) => {
         });
         setTagColors(colors);
     }, [tagCounts]);
+    const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
+    const paginatedResults = filteredResults.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        window.scrollTo(0, 0);
+    };
     return (
         <div id="search-results">
             <div className="results">
-                <p id="result-count">Found {results.length} result(s)</p>
-                <select
-                    value={selectedTag || ""}
-                    onChange={(e) => handleTagSelect(e.target.value || null)}
-                >
+                <p id="result-count">Found {filteredResults.length} result(s)</p>
+                <select value={selectedTag || ""} onChange={(e) => handleTagSelect(e.target.value || null)}>
                     <option value="">All Tags</option>
                     {Object.entries(tagCounts).map(([tag, count]) => (
-                        <option key={tag} value={tag}>
-                            {tag} ({count})
-                        </option>
+                        <option key={tag} value={tag}>{tag} ({count})</option>
                     ))}
                 </select>
+                <input
+                    type="number"
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Math.min(Math.max(1, Number(e.target.value)), filteredResults.length))}
+                    min="1"
+                    max={filteredResults.length}
+                />
             </div>
-            {filteredResults.length > 0 ? (
+            {paginatedResults.length > 0 ? (
                 <>
-                    {filteredResults.map((entry, index) => (
+                    {paginatedResults.map((entry, index) => (
                         <div key={index} className="entry">
-                            <span className="result-number">{index + 1}. </span>
+                            <span className="result-number">{(currentPage - 1) * itemsPerPage + index + 1}. </span>
                             <span className="term-with-furigana">
                                 {entry.furigana ? (
                                     entry.furigana.map((part, idx) =>
                                         part.rt ? (
-                                            <ruby key={idx}>
-                                                {part.ruby}
-                                                <rt>{part.rt}</rt>
-                                            </ruby>
+                                            <ruby key={idx}>{part.ruby}<rt>{part.rt}</rt></ruby>
                                         ) : (
                                             part.ruby
                                         )
                                     )
                                 ) : (
-                                    <ruby>
-                                        {entry.term}
-                                        <rt>{entry.reading}</rt>
-                                    </ruby>
+                                    <ruby>{entry.term}<rt>{entry.reading}</rt></ruby>
                                 )}
                             </span>
                             <ul className="meanings">
@@ -108,6 +104,13 @@ const SearchResults = ({ results }) => {
                             )}
                         </div>
                     ))}
+                    <div className="pagination">
+                        <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>First</button>
+                        <button onClick={() => handlePageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>Prev</button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <button onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>Next</button>
+                        <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>Last</button>
+                    </div>
                 </>
             ) : (
                 <p>No results found.</p>

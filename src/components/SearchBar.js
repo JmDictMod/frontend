@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-const api = "https://apijmdictmod.vercel.app/api/search" //Online server
-//const api = "http://localhost:5000/api/search" //Local server
+const api = "https://apijmdictmod.vercel.app/api/search"; // Online server
+//const api = "http://localhost:5000/api/search" // Local server
 const SearchBar = ({ setResults }) => {
     const [query, setQuery] = useState("");
     const [kanjiQuery, setKanjiQuery] = useState("");
     const [readingQuery, setReadingQuery] = useState("");
-    const [mode, setMode] = useState("exact");
-    // Clear results when mode changes
-    useEffect(() => {
-        setResults([]);
-        setQuery("");
-        setKanjiQuery("");
-        setReadingQuery("");
-    }, [mode, setResults]);
+    const [mode, setMode] = useState("any");
     const handleSearch = async () => {
         let searchQuery = query;
         if (mode === "both") {
@@ -30,6 +23,15 @@ const SearchBar = ({ setResults }) => {
             setResults([]);
         }
     };
+    useEffect(() => {
+        handleSearch();
+    }, [mode]); // Auto search when mode changes
+    // Handle Enter key press
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
     return (
         <div className="search-container">
             {mode === "both" ? (
@@ -39,12 +41,14 @@ const SearchBar = ({ setResults }) => {
                         placeholder="Enter Kanji (optional)..."
                         value={kanjiQuery}
                         onChange={(e) => setKanjiQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
                     <input
                         type="text"
                         placeholder="Enter Reading (optional)..."
                         value={readingQuery}
                         onChange={(e) => setReadingQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
                 </div>
             ) : (
@@ -53,6 +57,7 @@ const SearchBar = ({ setResults }) => {
                     placeholder="Enter search term..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                 />
             )}
             <select value={mode} onChange={(e) => setMode(e.target.value)}>
