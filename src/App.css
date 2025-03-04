@@ -1,7 +1,6 @@
 body {
   font-family: 'HGSKyokashotai', sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: black;
   margin: 0;
   padding: 0;
   display: flex;
@@ -11,15 +10,26 @@ body {
 }
 
 h1 {
-  font-size: 24px;
-  margin-top: 20px;
-  color: #222;
+  display: flex;
+  justify-content: center;
+  background: #0D0D0D;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  margin: 5px;
+  padding: 5px;
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: aqua;
 }
 
 .search-container {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  background: #0D0D0D;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  margin: 0;
+  padding: 10px;
 }
 
 input {
@@ -58,11 +68,11 @@ button:hover {
 }
 
 .entry {
-  background-color: #fff;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #0D0D0D;
+  box-shadow: 0 8px 16px #0003;
 }
 
 /* Modified Style to make it inline */
@@ -73,12 +83,18 @@ button:hover {
 }
 
 ruby {
-  font-size: 56px;
+  background-color: #1e5761;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px #0003;
+    color: yellow;
+    margin: 2px;
+    padding: 0;
+    font-size: 56px;
 }
 
 rt {
   font-size: 24px;
-  color: #007BFF;
+  color: lightgreen;
 }
 
 
@@ -97,19 +113,29 @@ select {
   font-weight: bold;
   margin-bottom: 10px;    /* Modified: increased the bottom margin so that it has space with the first result */
   text-align: left; /* Added: Align text to the left */
+  color: white;
 }
 
 /* Added class to display number in line with term */
 .result-number {
-  font-size: 20px;
   font-weight: bold;
   margin-right: 5px;
+  background-color: #c71e94;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px #0003;
+    color: rgb(0, 0, 0);
+    padding: 0;
+    font-size: 22px;
 }
 
 /* Added to give the result term and number some spacing */
 .term-with-furigana {
     margin-left: 5px;
     font-size: 36px;
+    color: lightgreen;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px #0003;
+    padding: 0;
 }
 
 /* Style the Tags */
@@ -123,8 +149,30 @@ select {
   background-color: #f0f0f0;
   border-radius: 5px;
   margin-right: 5px;
-  font-size: 14px; /* added: styling */
+  font-size: 18px; /* added: styling */
   color: #555; /* added: styling */
   margin-bottom: 5px; /* added: spacing between the result term and the tags */
   cursor: help; /* Added a pointer when hover around it. */
+}
+
+.results {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0D0D0D;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px #0003;
+  margin: 5px;
+  padding: 5px;
+}
+
+.meanings li {
+  background-color: #2c2c2c;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  color: rgb(1, 204, 255);
+  margin: 2px;
+  padding: 0;
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
 }
