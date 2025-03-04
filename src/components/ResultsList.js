@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
+
 const SearchResults = ({ results }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [filteredResults, setFilteredResults] = useState(results);
     const [tagColors, setTagColors] = useState({});
     const [itemsPerPage, setItemsPerPage] = useState(1000);
     const [currentPage, setCurrentPage] = useState(1);
+
+    // NEW STATE FOR KANJI DROPDOWN
+    const [selectedKanji, setSelectedKanji] = useState(null);
+    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
@@ -14,19 +20,23 @@ const SearchResults = ({ results }) => {
         });
         return tagCounts;
     };
+
     const [tagCounts, setTagCounts] = useState(countTagOccurrences());
+
     useEffect(() => {
         setTagCounts(countTagOccurrences());
         setFilteredResults(results);
         setSelectedTag(null);
         setCurrentPage(1);
     }, [results]);
+
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
         setCurrentPage(1);
         window.scrollTo(0, 0);
         setFilteredResults(tag ? results.filter(entry => entry.tags.some(entryTag => entryTag.tag === tag)) : results);
     };
+
     const generateColor = (tag) => {
         let hash = 0;
         for (let i = 0; i < tag.length; i++) {
@@ -34,6 +44,7 @@ const SearchResults = ({ results }) => {
         }
         return `hsl(${hash % 360}, 70%, 60%)`;
     };
+
     useEffect(() => {
         const colors = {};
         Object.keys(tagCounts).forEach(tag => {
@@ -41,12 +52,41 @@ const SearchResults = ({ results }) => {
         });
         setTagColors(colors);
     }, [tagCounts]);
+
+    // NEW FUNCTIONS FOR KANJI HANDLING
+    const handleKanjiClick = (kanji, event) => {
+        event.preventDefault();
+        if (selectedKanji === kanji) {
+            setSelectedKanji(null); // Close if clicking same kanji
+        } else {
+            const rect = event.target.getBoundingClientRect();
+            setSelectedKanji(kanji);
+            setDropdownPosition({
+                x: rect.left,
+                y: rect.bottom + window.scrollY
+            });
+        }
+    };
+
+    const handleOutsideClick = (event) => {
+        if (selectedKanji && !event.target.closest('.kanji-dropdown') && !event.target.closest('.kanji-char')) {
+            setSelectedKanji(null);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleOutsideClick);
+        return () => document.removeEventListener('click', handleOutsideClick);
+    }, [selectedKanji]);
+
     const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
     const paginatedResults = filteredResults.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
         window.scrollTo(0, 0);
     };
+
     return (
         <div id="search-results">
             <div className="results">
@@ -72,15 +112,38 @@ const SearchResults = ({ results }) => {
                             <span className="result-number">{(currentPage - 1) * itemsPerPage + index + 1}. </span>
                             <span className="term-with-furigana">
                                 {entry.furigana ? (
-                                    entry.furigana.map((part, idx) =>
-                                        part.rt ? (
-                                            <ruby key={idx}>{part.ruby}<rt>{part.rt}</rt></ruby>
-                                        ) : (
-                                            part.ruby
-                                        )
-                                    )
+                                    entry.furigana.map((part, idx) => {
+                                        if (part.rt) {
+                                            const kanjiParts = part.ruby.split('').map((char, charIdx) => (
+                                                <span 
+                                                    key={`${idx}-${charIdx}`} 
+                                                    className="kanji-char" 
+                                                    onClick={(e) => handleKanjiClick(char, e)}
+                                                    style={{ cursor: 'pointer' }}
+                                                >
+                                                    {char}
+                                                </span>
+                                            ));
+                                            return (
+                                                <ruby key={idx}>
+                                                    {kanjiParts}
+                                                    <rt>{part.rt}</rt>
+                                                </ruby>
+                                            );
+                                        }
+                                        return part.ruby;
+                                    })
                                 ) : (
-                                    <ruby>{entry.term}<rt>{entry.reading}</rt></ruby>
+                                    entry.term.split('').map((char, charIdx) => (
+                                        <span 
+                                            key={charIdx} 
+                                            className="kanji-char" 
+                                            onClick={(e) => handleKanjiClick(char, e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {char}
+                                        </span>
+                                    ))
                                 )}
                             </span>
                             <ul className="meanings">
@@ -104,6 +167,28 @@ const SearchResults = ({ results }) => {
                             )}
                         </div>
                     ))}
+                    {/* NEW KANJI DROPDOWN */}
+                    {selectedKanji && (
+                        <div 
+                            className="kanji-dropdown"
+                            style={{
+                                position: 'absolute',
+                                top: `${dropdownPosition.y}px`,
+                                left: `${dropdownPosition.x}px`,
+                                zIndex: 1000,
+                                background: 'white',
+                                border: '1px solid #ccc',
+                                padding: '10px',
+                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                            }}
+                        >
+                            <img 
+                                src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/animation/${selectedKanji}.gif`}
+                                alt={`Stroke order for ${selectedKanji}`}
+                                onError={(e) => e.target.style.display = 'none'} style={{ width: '300px' }}
+                            />
+                        </div>
+                    )}
                     <div className="pagination">
                         <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>First</button>
                         <button onClick={() => handlePageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>Prev</button>
@@ -118,4 +203,5 @@ const SearchResults = ({ results }) => {
         </div>
     );
 };
+
 export default SearchResults;
