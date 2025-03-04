@@ -167,7 +167,7 @@ const SearchResults = ({ results }) => {
                             )}
                         </div>
                     ))}
-                    {/* NEW KANJI DROPDOWN */}
+                    {/* MODIFIED KANJI DROPDOWN */}
                     {selectedKanji && (
                         <div 
                             className="kanji-dropdown"
@@ -179,14 +179,40 @@ const SearchResults = ({ results }) => {
                                 background: 'white',
                                 border: '1px solid #ccc',
                                 padding: '10px',
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '10px',
+                                maxWidth: '90vw',
+                                overflowX: 'auto'
                             }}
                         >
-                            <img 
-                                src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/animation/${selectedKanji}.gif`}
-                                alt={`Stroke order for ${selectedKanji}`}
-                                onError={(e) => e.target.style.display = 'none'} style={{ width: '300px' }}
-                            />
+                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                                <div style={{ flex: '0 0 auto' }}>
+                                    <img 
+                                        src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/animation/${selectedKanji}.gif`}
+                                        alt={`Animation for ${selectedKanji}`}
+                                        onError={(e) => e.target.style.display = 'none'}
+                                        style={{ width: '300px', height: 'auto' }}
+                                    />
+                                </div>
+                                <div style={{ flex: '0 0 auto' }}>
+                                    <img 
+                                        src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanji-kakijun/${selectedKanji}.png`}
+                                        alt={`Kakijun for ${selectedKanji}`}
+                                        onError={(e) => e.target.style.display = 'none'}
+                                        style={{ width: '300px', height: 'auto' }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ flex: '0 0 auto' }}>
+                                <img 
+                                    src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanjifont/${selectedKanji}.png`}
+                                    alt={`Font for ${selectedKanji}`}
+                                    onError={(e) => e.target.style.display = 'none'}
+                                    style={{ width: '600px', height: 'auto' }}
+                                />
+                            </div>
                         </div>
                     )}
                     <div className="pagination">
