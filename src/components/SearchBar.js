@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+const api = "https://apijmdictmod.vercel.app/api/search" //Online server
+//const api = "http://localhost:5000/api/search" //Local server
 const SearchBar = ({ setResults }) => {
     const [query, setQuery] = useState("");
     const [kanjiQuery, setKanjiQuery] = useState("");
@@ -18,7 +20,7 @@ const SearchBar = ({ setResults }) => {
             searchQuery = `${kanjiQuery},${readingQuery}`;
         }
         try {
-            const response = await axios.get(`http://localhost:5000/api/search`, {
+            const response = await axios.get(api, {
                 params: { query: searchQuery, mode },
             });
             setResults(response.data.results);
