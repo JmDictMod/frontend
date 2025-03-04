@@ -2,37 +2,35 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const api = "https://apijmdictmod.vercel.app/api/search"; // Online server
-// const api = "http://localhost:5000/api/search"; // Local server
+//const api = "http://localhost:5000/api/search" // Local server
 
 const SearchBar = ({ setResults }) => {
-    const [query, setQuery] = useState("Welcome"); // Set initial query to "Welcome"
+    const [query, setQuery] = useState("");
     const [kanjiQuery, setKanjiQuery] = useState("");
     const [readingQuery, setReadingQuery] = useState("");
     const [mode, setMode] = useState("any");
 
-    const isEnglish = (str) => /^[a-zA-Z\s]+$/.test(str); // Check if query is English
+    const isEnglish = (text) => /^[a-zA-Z0-9\s]+$/.test(text);
 
-    const handleSearch = async (overrideMode = mode) => {
-        let searchQuery = query.trim();
-        if (isEnglish(searchQuery)) {
-            searchQuery = searchQuery.toLowerCase(); // Convert to lowercase for case insensitivity
-        }
+    const handleSearch = async (overrideMode = null) => {
+        let searchQuery = query;
+        let searchMode = overrideMode || mode;
 
-        if (overrideMode === "both") {
+        if (mode === "both") {
             searchQuery = `${kanjiQuery},${readingQuery}`;
         }
 
         try {
             const response = await axios.get(api, {
-                params: { query: searchQuery, mode: overrideMode },
+                params: { query: searchQuery, mode: searchMode },
             });
-            setResults(response.data.results);
-            console.log("Search results:", response.data);
 
-            // If the query is in English and results are empty, retry with en_any mode
-            if (isEnglish(query) && response.data.results.length === 0 && overrideMode !== "en_any") {
-                console.log("No results found, retrying with en_any mode...");
-                handleSearch("en_any");
+            if (response.data.results.length === 0 && isEnglish(query) && searchMode !== "en_any") {
+                console.log("No results found. Retrying with 'en_any' mode...");
+                await handleSearch("en_any");
+            } else {
+                setResults(response.data.results);
+                console.log("Search results:", response.data);
             }
         } catch (error) {
             console.error("Search error:", error);
@@ -43,10 +41,6 @@ const SearchBar = ({ setResults }) => {
     useEffect(() => {
         handleSearch();
     }, [mode]); // Auto search when mode changes
-
-    useEffect(() => {
-        handleSearch(); // Perform search when component mounts (with "Welcome")
-    }, []);
 
     // Handle Enter key press
     const handleKeyDown = (e) => {
