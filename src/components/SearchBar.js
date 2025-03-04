@@ -10,7 +10,7 @@ const SearchBar = ({ setResults }) => {
     const [readingQuery, setReadingQuery] = useState("");
     const [mode, setMode] = useState("any");
 
-    const isEnglish = (text) => /^[a-zA-Z0-9\s]+$/.test(text);
+    const isEnglish = (text) => /^[a-zA-Z0-9\s.,!?;:'"(){}\[\]\/\-]+$/.test(text);
 
     const handleSearch = async (overrideMode = null) => {
         let searchQuery = query;
