@@ -4,7 +4,7 @@ const SearchResults = ({ results }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [filteredResults, setFilteredResults] = useState(results);
     const [tagColors, setTagColors] = useState({});
-    const [itemsPerPage, setItemsPerPage] = useState(1000);
+    const [itemsPerPage, setItemsPerPage] = useState(100);
     const [currentPage, setCurrentPage] = useState(1);
 
     // NEW STATE FOR KANJI DROPDOWN
