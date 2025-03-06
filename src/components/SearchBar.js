@@ -5,7 +5,7 @@ const api = "https://apijmdictmod.vercel.app/api/search"; // Online server
 //const api = "http://localhost:5000/api/search" // Local server
 
 const SearchBar = ({ setResults }) => {
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState("#conj");
     const [kanjiQuery, setKanjiQuery] = useState("");
     const [readingQuery, setReadingQuery] = useState("");
     const [mode, setMode] = useState("any");
