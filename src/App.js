@@ -14,6 +14,7 @@ const App = () => {
                 <h1>Japanese Dictionary</h1>
                 <SearchBar setResults={setResults} />
                 <SearchResults results={results} />
+                <Analytics />
             </div>
         </BrowserRouter>
     );
