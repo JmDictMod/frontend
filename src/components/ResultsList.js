@@ -6,8 +6,6 @@ const SearchResults = ({ results }) => {
     const [tagColors, setTagColors] = useState({});
     const [itemsPerPage, setItemsPerPage] = useState(100);
     const [currentPage, setCurrentPage] = useState(1);
-
-    // NEW STATE FOR KANJI DROPDOWN
     const [selectedKanji, setSelectedKanji] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
 
@@ -23,18 +21,48 @@ const SearchResults = ({ results }) => {
 
     const [tagCounts, setTagCounts] = useState(countTagOccurrences());
 
+    // Define tag priority order
+    const tagPriority = {
+        "ichi": 6,
+        "P": 5,
+        "spec": 4,
+        "news": 3,
+        "proverb": 2,
+        "exp": 1,
+    };
+
+    // Sorting function based on tag priority
+    const sortByTagPriority = (entries) => {
+        return [...entries].sort((a, b) => {
+            const aTags = a.tags.map(t => t.tag);
+            const bTags = b.tags.map(t => t.tag);
+
+            // Find the highest priority tag in each entry
+            const aMaxPriority = Math.max(...aTags.map(tag => tagPriority[tag] || 0));
+            const bMaxPriority = Math.max(...bTags.map(tag => tagPriority[tag] || 0));
+
+            return bMaxPriority - aMaxPriority; // Descending order (higher priority first)
+        });
+    };
+
     useEffect(() => {
         setTagCounts(countTagOccurrences());
-        setFilteredResults(results);
-        setSelectedTag(null);
+        if (selectedTag) {
+            // Filter by selected tag
+            setFilteredResults(results.filter(entry => 
+                entry.tags.some(entryTag => entryTag.tag === selectedTag)
+            ));
+        } else {
+            // Sort by priority when "All Tags" is selected
+            setFilteredResults(sortByTagPriority(results));
+        }
         setCurrentPage(1);
-    }, [results]);
+    }, [results, selectedTag]);
 
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
         setCurrentPage(1);
         window.scrollTo(0, 0);
-        setFilteredResults(tag ? results.filter(entry => entry.tags.some(entryTag => entryTag.tag === tag)) : results);
     };
 
     const generateColor = (tag) => {
@@ -53,11 +81,10 @@ const SearchResults = ({ results }) => {
         setTagColors(colors);
     }, [tagCounts]);
 
-    // NEW FUNCTIONS FOR KANJI HANDLING
     const handleKanjiClick = (kanji, event) => {
         event.preventDefault();
         if (selectedKanji === kanji) {
-            setSelectedKanji(null); // Close if clicking same kanji
+            setSelectedKanji(null);
         } else {
             const rect = event.target.getBoundingClientRect();
             setSelectedKanji(kanji);
@@ -91,28 +118,30 @@ const SearchResults = ({ results }) => {
         <div id="search-results">
             <div className="results">
                 <p id="result-count">Found {filteredResults.length} result(s)</p>
-                <select value={selectedTag || ""} onChange={(e) => handleTagSelect(e.target.value || null)} 
-        style={{ 
-            backgroundColor: "#fff", 
-            color: "#000", 
-            padding: "3px 8px", 
-            borderRadius: "4px", 
-            marginRight: "5px" 
-        }}>
-    <option value="">All Tags</option>
-    {Object.entries(tagCounts).map(([tag, count]) => {
-        // Find the tag object from the results to get the description
-        const tagDetails = results
-            .flatMap(entry => entry.tags)
-            .find(t => t.tag === tag);
-        const description = tagDetails ? tagDetails.description : "No description available";
-        return (
-            <option key={tag} value={tag}>
-                {`${tag} (${count}) - ${description}`}
-            </option>
-        );
-    })}
-</select>
+                <select 
+                    value={selectedTag || ""} 
+                    onChange={(e) => handleTagSelect(e.target.value || null)} 
+                    style={{ 
+                        backgroundColor: "#fff", 
+                        color: "#000", 
+                        padding: "3px 8px", 
+                        borderRadius: "4px", 
+                        marginRight: "5px" 
+                    }}
+                >
+                    <option value="">All Tags</option>
+                    {Object.entries(tagCounts).map(([tag, count]) => {
+                        const tagDetails = results
+                            .flatMap(entry => entry.tags)
+                            .find(t => t.tag === tag);
+                        const description = tagDetails ? tagDetails.description : "No description available";
+                        return (
+                            <option key={tag} value={tag}>
+                                {`${tag} (${count}) - ${description}`}
+                            </option>
+                        );
+                    })}
+                </select>
                 <input
                     type="number"
                     value={itemsPerPage}
@@ -184,7 +213,6 @@ const SearchResults = ({ results }) => {
                             )}
                         </div>
                     ))}
-                    {/* MODIFIED KANJI DROPDOWN */}
                     {selectedKanji && (
                         <div 
                             className="kanji-dropdown"
