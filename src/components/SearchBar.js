@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const api = "https://apijmdictmod.vercel.app/api/search"; // Online server
-//const api = "http://localhost:5000/api/search" // Local server
+// const api = "http://localhost:5000/api/search"; // Local server
 
 const SearchBar = ({ setResults }) => {
-    const [query, setQuery] = useState("#conj");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    const initialQuery = searchParams.get("query") || "#conj"; // Default to "#conj" if no query is provided
+    const initialMode = searchParams.get("mode") || "any";
+
+    const [query, setQuery] = useState(initialQuery);
     const [kanjiQuery, setKanjiQuery] = useState("");
     const [readingQuery, setReadingQuery] = useState("");
-    const [mode, setMode] = useState("any");
+    const [mode, setMode] = useState(initialMode);
 
     const isEnglish = (text) => /^[a-zA-Z0-9\s.,!?;:'"(){}\[\]\/\-]+$/.test(text);
 
@@ -31,6 +38,9 @@ const SearchBar = ({ setResults }) => {
             } else {
                 setResults(response.data.results);
                 console.log("Search results:", response.data);
+
+                // Update the URL without reloading
+                navigate(`?query=${encodeURIComponent(searchQuery)}&mode=${searchMode}`, { replace: true });
             }
         } catch (error) {
             console.error("Search error:", error);
@@ -38,11 +48,16 @@ const SearchBar = ({ setResults }) => {
         }
     };
 
+    // Perform search on page load
     useEffect(() => {
         handleSearch();
-    }, [mode]); // Auto search when mode changes
+    }, []); // Run only once on mount
 
-    // Handle Enter key press
+    // Perform search when mode changes
+    useEffect(() => {
+        handleSearch();
+    }, [mode]); // Runs whenever the mode changes
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             handleSearch();

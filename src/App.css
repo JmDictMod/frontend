@@ -1,12 +1,20 @@
 body {
   font-family: 'HGSKyokashotai', sans-serif;
-  background-color: black;
+  background-color: #0D0D0D; /* Matches content containers for seamless look */
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch; /* Stretch children to full width */
   font-size: 22px;
+  min-height: 100vh; /* Ensure body takes full viewport height */
+}
+
+.main-container {
+  width: 100%; /* Stretch to full width */
+  background-color: #0D0D0D; /* Consistent background */
+  padding: 20px; /* Add padding to avoid content touching edges */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 h1 {
@@ -15,11 +23,13 @@ h1 {
   background: #0D0D0D;
   border-radius: 10px;
   box-shadow: 0 4px 8px #0003;
-  margin: 5px;
+  margin: 5px auto;
   padding: 5px;
   font-size: 20px;
   font-family: Arial, Helvetica, sans-serif;
   color: aqua;
+  max-width: 1200px; /* Cap header width for consistency */
+  width: 90%; /* Responsive width */
 }
 
 .search-container {
@@ -28,20 +38,39 @@ h1 {
   background: #0D0D0D;
   border-radius: 10px;
   box-shadow: 0 4px 8px #0003;
-  margin: 0;
+  margin: 0 auto 20px; /* Margin bottom for spacing */
   padding: 10px;
+  width: 90%; /* Responsive width */
+  max-width: 1200px; /* Cap width */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 10px; /* Space between elements */
 }
 
-input {
-  width: 250px;
-  padding: 8px 12px;
+input[type="text"] {
+  width: 150px; /* Reduced from 250px to a more compact size */
+  padding: 6px 10px; /* Adjusted padding for smaller size */
   border: 2px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px; /* Reduced font size */
   outline: none;
+  box-sizing: border-box; /* Ensure padding doesn't increase width */
 }
 
-input:focus {
+input[type="text"]:focus {
+  border-color: #007BFF;
+}
+
+input[type="number"] {
+  width: 60px; /* Compact size for item count selection */
+  padding: 6px 8px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+input[type="number"]:focus {
   border-color: #007BFF;
 }
 
@@ -49,9 +78,9 @@ button {
   background-color: #007BFF;
   color: white;
   border: none;
-  padding: 8px 15px;
-  margin-left: 10px;
-  font-size: 16px;
+  padding: 6px 12px; /* Adjusted padding for smaller button */
+  margin-left: 5px; /* Reduced margin */
+  font-size: 14px; /* Reduced font size */
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
@@ -61,10 +90,23 @@ button:hover {
   background-color: #0056b3;
 }
 
+select {
+  padding: 6px; /* Reduced padding */
+  font-size: 14px; /* Reduced font size */
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  margin-left: 5px; /* Reduced margin */
+  cursor: pointer;
+  width: 120px; /* Reduced width for search mode and tag dropdown */
+  box-sizing: border-box; /* Ensure padding doesn't increase width */
+}
+
 #search-results {
-  width: 90%;
-  max-width: 600px;
-  margin-top: 20px;
+  width: 90%; /* Responsive width */
+  max-width: 1200px; /* Cap width for readability */
+  margin: 0 auto 20px; /* Center and add bottom margin */
+  padding: 0 10px; /* Add internal padding */
+  box-sizing: border-box;
 }
 
 .entry {
@@ -79,17 +121,17 @@ button:hover {
 .entry p {
   margin: 5px 0;
   font-size: 16px;
-  display: inline;   /* ADDED: Make the content to display on the same line */
+  display: inline; /* ADDED: Make the content to display on the same line */
 }
 
 ruby {
   background-color: #1e5761;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px #0003;
-    color: yellow;
-    margin: 2px;
-    padding: 0;
-    font-size: 56px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  color: yellow;
+  margin: 2px;
+  padding: 0;
+  font-size: 56px;
 }
 
 rt {
@@ -97,21 +139,11 @@ rt {
   color: lightgreen;
 }
 
-
-select {
-  padding: 8px;
-  font-size: 16px;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  margin-left: 10px;
-  cursor: pointer;
-}
-
 /* Modified Id to display on top */
 #result-count {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;    /* Modified: increased the bottom margin so that it has space with the first result */
+  margin-bottom: 10px; /* Modified: increased the bottom margin */
   text-align: left; /* Added: Align text to the left */
   color: white;
 }
@@ -121,21 +153,21 @@ select {
   font-weight: bold;
   margin-right: 5px;
   background-color: #c71e94;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px #0003;
-    color: rgb(0, 0, 0);
-    padding: 0;
-    font-size: 22px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  color: rgb(0, 0, 0);
+  padding: 0;
+  font-size: 22px;
 }
 
 /* Added to give the result term and number some spacing */
 .term-with-furigana {
-    margin-left: 5px;
-    font-size: 36px;
-    color: lightgreen;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px #0003;
-    padding: 0;
+  margin-left: 5px;
+  font-size: 36px;
+  color: lightgreen;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #0003;
+  padding: 0;
 }
 
 /* Style the Tags */
@@ -145,14 +177,14 @@ select {
 
 .tag {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 6px; /* Reduced padding */
   background-color: #f0f0f0;
   border-radius: 5px;
   margin-right: 5px;
-  font-size: 18px; /* added: styling */
-  color: #555; /* added: styling */
-  margin-bottom: 5px; /* added: spacing between the result term and the tags */
-  cursor: help; /* Added a pointer when hover around it. */
+  font-size: 16px; /* Slightly reduced font size */
+  color: #555;
+  margin-bottom: 5px;
+  cursor: help;
 }
 
 .results {
@@ -176,6 +208,7 @@ select {
   font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
 }
+
 .pagination {
   background-color: #0D0D0D;
   border-radius: 10px;
