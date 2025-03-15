@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Analytics } from "@vercel/analytics/react"
 import { BrowserRouter } from "react-router-dom";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/ResultsList";
