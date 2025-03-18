@@ -192,11 +192,9 @@ const SearchResults = ({ results }) => {
                                     </ruby>
                                 )}
                             </span>
-                            <ul className="meanings">
-                                {entry.meanings.map((meaning, idx) => (
-                                    <li key={idx}>{meaning}</li>
-                                ))}
-                            </ul>
+                            <p className="meanings">
+                                {entry.meanings.join(", ")}
+                            </p>
                             {entry.tags && entry.tags.length > 0 && (
                                 <div className="tags">
                                     {entry.tags.map((tag, idx) => (
