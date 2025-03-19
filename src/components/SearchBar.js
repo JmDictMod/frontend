@@ -33,17 +33,17 @@ const SearchBar = ({ setResults }) => {
             });
 
             if (response.data.results.length === 0 && isEnglish(query) && searchMode !== "en_any") {
-                console.log("No results found. Retrying with 'en_any' mode...");
+                //console.log("No results found. Retrying with 'en_any' mode...");
                 await handleSearch("en_any");
             } else {
                 setResults(response.data.results);
-                console.log("Search results:", response.data);
+                //console.log("Search results:", response.data);
 
                 // Update the URL without reloading
                 navigate(`?query=${encodeURIComponent(searchQuery)}&mode=${searchMode}`, { replace: true });
             }
         } catch (error) {
-            console.error("Search error:", error);
+            //console.error("Search error:", error);
             setResults([]);
         }
     };
