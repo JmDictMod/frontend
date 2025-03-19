@@ -219,7 +219,7 @@ const SearchResults = ({ results }) => {
                                 top: `${dropdownPosition.y}px`,
                                 left: `${dropdownPosition.x}px`,
                                 zIndex: 1000,
-                                background: 'white',
+                                background: 'black',
                                 border: '1px solid #ccc',
                                 padding: '10px',
                                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
