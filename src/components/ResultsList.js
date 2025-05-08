@@ -41,10 +41,11 @@ const SearchResults = ({ results }) => {
         window.scrollTo(0, 0);
     };
 
-    const generateColor = (tag) => {
+    const generateColor = (input) => {
         let hash = 0;
-        for (let i = 0; i < tag.length; i++) {
-            hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+        const str = String(input); // Ensure input is a string
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
         return `hsl(${hash % 360}, 70%, 60%)`;
     };
@@ -54,8 +55,14 @@ const SearchResults = ({ results }) => {
         Object.keys(tagCounts).forEach(tag => {
             colors[tag] = generateColor(tag);
         });
+        // Generate colors for frequency values
+        results.forEach(entry => {
+            if (entry.frequency) {
+                colors[`freq-${entry.frequency}`] = generateColor(entry.frequency);
+            }
+        });
         setTagColors(colors);
-    }, [tagCounts]);
+    }, [tagCounts, results]);
 
     const handleKanjiClick = (kanji, event) => {
         event.preventDefault();
@@ -171,14 +178,9 @@ const SearchResults = ({ results }) => {
                             <p className="meanings">
                                 {entry.meanings.join(", ")}
                             </p>
-                            {entry.frequency && (
-                                <p className="frequency" style={{ margin: '5px 0', fontWeight: 'bold' }}>
-                                    FR: {entry.frequency}
-                                </p>
-                            )}
-                            {entry.tags && entry.tags.length > 0 && (
+                            {(entry.tags && entry.tags.length > 0 || entry.frequency) && (
                                 <div className="tags">
-                                    {entry.tags.map((tag, idx) => (
+                                    {entry.tags && entry.tags.map((tag, idx) => (
                                         <span 
                                             key={idx} 
                                             className="tag" 
@@ -188,6 +190,15 @@ const SearchResults = ({ results }) => {
                                             {tag.tag}
                                         </span>
                                     ))}
+                                    {entry.frequency && (
+                                        <span 
+                                            className="tag frequency" 
+                                            title="Frequency rank"
+                                            style={{ backgroundColor: tagColors[`freq-${entry.frequency}`] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
+                                        >
+                                            FR: {entry.frequency}
+                                        </span>
+                                    )}
                                 </div>
                             )}
                         </div>
