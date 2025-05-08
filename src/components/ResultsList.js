@@ -4,10 +4,19 @@ const SearchResults = ({ results }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [filteredResults, setFilteredResults] = useState(results);
     const [tagColors, setTagColors] = useState({});
-    const [itemsPerPage, setItemsPerPage] = useState(100);
+    const [itemsPerPage, setItemsPerPage] =aton(100);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedKanji, setSelectedKanji] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+    const [kanjiData, setKanjiData] = useState([]);
+
+    // Fetch kanji.json data
+    useEffect(() => {
+        fetch('/kanji.json')
+            .then(response => response.json())
+            .then(data => setKanjiData(data))
+            .catch(error => console.error('Error fetching kanji data:', error));
+    }, []);
 
     const countTagOccurrences = () => {
         const tagCounts = {};
@@ -96,6 +105,9 @@ const SearchResults = ({ results }) => {
         setCurrentPage(newPage);
         window.scrollTo(0, 0);
     };
+
+    // Find the kanji details from kanjiData
+    const selectedKanjiDetails = selectedKanji ? kanjiData.find(item => item.kanji === selectedKanji) : null;
 
     return (
         <div id="search-results">
@@ -211,43 +223,58 @@ const SearchResults = ({ results }) => {
                                 top: `${dropdownPosition.y}px`,
                                 left: `${dropdownPosition.x}px`,
                                 zIndex: 1000,
-                                background: 'black',
+                                background: '#fff',
                                 border: '1px solid #ccc',
-                                padding: '10px',
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                padding: '15px',
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '10px',
+                                gap: '15px',
                                 maxWidth: '90vw',
-                                overflowX: 'auto'
+                                overflowX: 'auto',
+                                borderRadius: '8px'
                             }}
                         >
-                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
-                                <div style={{ flex: '0 0 auto' }}>
-                                    <img 
-                                        src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/animation/${selectedKanji}.gif`}
-                                        alt={`Animation for ${selectedKanji}`}
-                                        onError={(e) => e.target.style.display = 'none'}
-                                        style={{ width: '300px', height: 'auto' }}
-                                    />
+                            <h2 style={{ margin: '0', fontSize: '24px', color: '#333' }}>{selectedKanji}</h2>
+                            {selectedKanjiDetails ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'row', gap: '15px', flexWrap: 'wrap' }}>
+                                        <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Meaning:</strong> {selectedKanjiDetails.meaning}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Kun Reading:</strong> {selectedKanjiDetails.kun_reading}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>On Reading:</strong> {selectedKanjiDetails.on_reading}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Stroke Count:</strong> {selectedKanjiDetails.stroke_count}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Level:</strong> {selectedKanjiDetails.level}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Subject:</strong> {selectedKanjiDetails.subject}</p>
+                                            <p style={{ margin: '0', fontSize: '16px' }}><strong>Key Reading:</strong> {selectedKanjiDetails.keyread}</p>
+                                        </div>
+                                        <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+                                            <img 
+                                                src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/animation/${selectedKanji}.gif`}
+                                                alt={`Animation for ${selectedKanji}`}
+                                                onError={(e) => e.target.style.display = 'none'}
+                                                style={{ maxWidth: '200px', height: 'auto', border: '1px solid #ddd', borderRadius: '4px' }}
+                                            />
+                                            <img 
+                                                src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanji-kakijun/${selectedKanji}.png`}
+                                                alt={`Kakijun for ${selectedKanji}`}
+                                                onError={(e) => e.target.style.display = 'none'}
+                                                style={{ maxWidth: '200px', height: 'auto', border: '1px solid #ddd', borderRadius: '4px' }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <img 
+                                            src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanjifont/${selectedKanji}.png`}
+                                            alt={`Font for ${selectedKanji}`}
+                                            onError={(e) => e.target.style.display = 'none'}
+                                            style={{ maxWidth: '400px', height: 'auto', border: '1px solid #ddd', borderRadius: '4px' }}
+                                        />
+                                    </div>
                                 </div>
-                                <div style={{ flex: '0 0 auto' }}>
-                                    <img 
-                                        src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanji-kakijun/${selectedKanji}.png`}
-                                        alt={`Kakijun for ${selectedKanji}`}
-                                        onError={(e) => e.target.style.display = 'none'}
-                                        style={{ width: '300px', height: 'auto' }}
-                                    />
-                                </div>
-                            </div>
-                            <div style={{ flex: '0 0 auto' }}>
-                                <img 
-                                    src={`https://raw.githubusercontent.com/quizgoi/Kakijun/main/kanjifont/${selectedKanji}.png`}
-                                    alt={`Font for ${selectedKanji}`}
-                                    onError={(e) => e.target.style.display = 'none'}
-                                    style={{ width: '600px', height: 'auto' }}
-                                />
-                            </div>
+                            ) : (
+                                <p style={{ margin: '0', fontSize: '16px', color: '#888' }}>No details available for this kanji.</p>
+                            )}
                         </div>
                     )}
                     <div className="pagination">
