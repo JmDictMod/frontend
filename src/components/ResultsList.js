@@ -21,30 +21,6 @@ const SearchResults = ({ results }) => {
 
     const [tagCounts, setTagCounts] = useState(countTagOccurrences());
 
-    // Define tag priority order
-    const tagPriority = {
-        "ichi": 6,
-        "P": 5,
-        "spec": 4,
-        "news": 3,
-        "proverb": 2,
-        "exp": 1,
-    };
-
-    // Sorting function based on tag priority
-    const sortByTagPriority = (entries) => {
-        return [...entries].sort((a, b) => {
-            const aTags = a.tags.map(t => t.tag);
-            const bTags = b.tags.map(t => t.tag);
-
-            // Find the highest priority tag in each entry
-            const aMaxPriority = Math.max(...aTags.map(tag => tagPriority[tag] || 0));
-            const bMaxPriority = Math.max(...bTags.map(tag => tagPriority[tag] || 0));
-
-            return bMaxPriority - aMaxPriority; // Descending order (higher priority first)
-        });
-    };
-
     useEffect(() => {
         setTagCounts(countTagOccurrences());
         if (selectedTag) {
@@ -53,8 +29,8 @@ const SearchResults = ({ results }) => {
                 entry.tags.some(entryTag => entryTag.tag === selectedTag)
             ));
         } else {
-            // Sort by priority when "All Tags" is selected
-            setFilteredResults(sortByTagPriority(results));
+            // Use original results when "All Tags" is selected
+            setFilteredResults(results);
         }
         setCurrentPage(1);
     }, [results, selectedTag]);
@@ -195,6 +171,11 @@ const SearchResults = ({ results }) => {
                             <p className="meanings">
                                 {entry.meanings.join(", ")}
                             </p>
+                            {entry.frequency && (
+                                <p className="frequency" style={{ margin: '5px 0', fontWeight: 'bold' }}>
+                                    FR: {entry.frequency}
+                                </p>
+                            )}
                             {entry.tags && entry.tags.length > 0 && (
                                 <div className="tags">
                                     {entry.tags.map((tag, idx) => (
