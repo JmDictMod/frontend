@@ -246,6 +246,7 @@ const SearchResults = ({ results }) => {
                                             <p style={{ margin: '0', fontSize: '18px', color: '#1e5761' }}><strong>Level:</strong> {selectedKanjiDetails.level}</p>
                                             <p style={{ margin: '0', fontSize: '18px', color: '#1e5761' }}><strong>Subject:</strong> {selectedKanjiDetails.subject}</p>
                                             <p style={{ margin: '0', fontSize: '28px', color: '#1e5761' }}><strong>Key Reading:</strong> {selectedKanjiDetails.keyread}</p>
+                                            <p style={{ margin: '0', fontSize: '28px', color: '#1e5761' }}><strong>Decomposition:</strong> {selectedKanjiDetails.decomposition}</p>
                                             <p style={{ margin: '0', fontSize: '18px', color: '#1e5761' }}><strong>Sequence:</strong> {selectedKanjiDetails.sequence}</p>
                                         </div>
                                         <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
