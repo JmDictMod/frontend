@@ -9,20 +9,33 @@ const SearchResults = ({ results }) => {
     const [selectedKanji, setSelectedKanji] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const [kanjiData, setKanjiData] = useState([]);
+    const [tagBank, setTagBank] = useState({});
 
-    // Fetch kanji.json data
+    // Fetch kanji.json and tagbank.json data
     useEffect(() => {
         fetch('/kanji.json')
             .then(response => response.json())
             .then(data => setKanjiData(data))
             .catch(error => console.error('Error fetching kanji data:', error));
+
+        fetch('/tagbank.json')
+            .then(response => response.json())
+            .then(data => {
+                const tagMap = {};
+                data.forEach(tag => {
+                    tagMap[tag.id] = tag.description;
+                });
+                setTagBank(tagMap);
+            })
+            .catch(error => console.error('Error fetching tagbank data:', error));
     }, []);
 
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
-            entry.tags.forEach(tag => {
-                tagCounts[tag.tag] = (tagCounts[tag.tag] || 0) + 1;
+            const tags = entry.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            tags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             });
         });
         return tagCounts;
@@ -33,9 +46,9 @@ const SearchResults = ({ results }) => {
     useEffect(() => {
         setTagCounts(countTagOccurrences());
         if (selectedTag) {
-            // Filter by selected tag
+            // Filter by selected tag ID
             setFilteredResults(results.filter(entry => 
-                entry.tags.some(entryTag => entryTag.tag === selectedTag)
+                entry.tags.split(',').map(tag => tag.trim()).includes(selectedTag)
             ));
         } else {
             // Use original results when "All Tags" is selected
@@ -125,17 +138,11 @@ const SearchResults = ({ results }) => {
                     }}
                 >
                     <option value="">All Tags</option>
-                    {Object.entries(tagCounts).map(([tag, count]) => {
-                        const tagDetails = results
-                            .flatMap(entry => entry.tags)
-                            .find(t => t.tag === tag);
-                        const description = tagDetails ? tagDetails.description : "No description available";
-                        return (
-                            <option key={tag} value={tag}>
-                                {`${tag} (${count}) - ${description}`}
-                            </option>
-                        );
-                    })}
+                    {Object.entries(tagCounts).map(([tag, count]) => (
+                        <option key={tag} value={tag}>
+                            {`${tag} (${count}) - ${tagBank[tag] || "No description available"}`}
+                        </option>
+                    ))}
                 </select>
                 <input
                     type="number"
@@ -190,16 +197,16 @@ const SearchResults = ({ results }) => {
                             <p className="meanings">
                                 {entry.meanings.join(", ")}
                             </p>
-                            {(entry.tags && entry.tags.length > 0 || entry.frequency) && (
+                            {(entry.tags || entry.frequency) && (
                                 <div className="tags">
-                                    {entry.tags && entry.tags.map((tag, idx) => (
+                                    {entry.tags && entry.tags.split(',').map((tag, idx) => (
                                         <span 
                                             key={idx} 
                                             className="tag" 
-                                            title={tag.description}
-                                            style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
+                                            title={tagBank[tag] || "No description available"}
+                                            style={{ backgroundColor: tagColors[tag] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
                                         >
-                                            {tag.tag}
+                                            {tag}
                                         </span>
                                     ))}
                                     {entry.frequency && (
