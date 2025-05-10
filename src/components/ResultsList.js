@@ -27,7 +27,7 @@ const SearchResults = ({ results }) => {
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
-            const tagIds = entry.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tagIds = entry.l.split(',').map(tag => tag.trim()).filter(tag => tag); // Updated to use 'l' for tags
             tagIds.forEach(tagId => {
                 const tag = tagBank.find(t => t.id === parseInt(tagId));
                 if (tag) {
@@ -45,7 +45,7 @@ const SearchResults = ({ results }) => {
         if (selectedTag) {
             // Filter by selected tag name
             setFilteredResults(results.filter(entry => 
-                entry.tags.split(',').map(tag => tag.trim()).some(tagId => 
+                entry.l.split(',').map(tag => tag.trim()).some(tagId => // Updated to use 'l' for tags
                     tagBank.find(t => t.id === parseInt(tagId) && t.tag === selectedTag)
                 )
             ));
@@ -78,8 +78,8 @@ const SearchResults = ({ results }) => {
         });
         // Generate colors for frequency values
         results.forEach(entry => {
-            if (entry.frequency) {
-                colors[`freq-${entry.frequency}`] = generateColor(entry.frequency);
+            if (entry.o) { // Updated to use 'o' for frequency
+                colors[`freq-${entry.o}`] = generateColor(entry.o); // Updated to use 'o'
             }
         });
         setTagColors(colors);
@@ -165,11 +165,11 @@ const SearchResults = ({ results }) => {
                         <div key={index} className="entry">
                             <span className="result-number">{(currentPage - 1) * itemsPerPage + index + 1}. </span>
                             <span className="term-with-furigana">
-                                {entry.furigana ? (
-                                    entry.furigana.map((part, idx) =>
-                                        part.rt ? (
+                                {entry.f ? ( // Updated to use 'f' for furigana
+                                    entry.f.map((part, idx) =>
+                                        part.a ? ( // Updated to use 'a' for rt
                                             <ruby key={idx}>
-                                                {part.ruby.split('').map((char, charIdx) => (
+                                                {part.b.split('').map((char, charIdx) => ( // Updated to use 'b' for ruby
                                                     <span 
                                                         key={`${idx}-${charIdx}`} 
                                                         className="kanji-char" 
@@ -179,15 +179,15 @@ const SearchResults = ({ results }) => {
                                                         {char}
                                                     </span>
                                                 ))}
-                                                <rt>{part.rt}</rt>
+                                                <rt>{part.a}</rt> // Updated to use 'a' for rt
                                             </ruby>
                                         ) : (
-                                            part.ruby
+                                            part.b // Updated to use 'b' for ruby
                                         )
                                     )
                                 ) : (
                                     <ruby>
-                                        {entry.term.split('').map((char, charIdx) => (
+                                        {entry.t.split('').map((char, charIdx) => ( // Updated to use 't' for term
                                             <span 
                                                 key={charIdx} 
                                                 className="kanji-char" 
@@ -197,16 +197,16 @@ const SearchResults = ({ results }) => {
                                                 {char}
                                             </span>
                                         ))}
-                                        <rt>{entry.reading}</rt>
+                                        <rt>{entry.r}</rt> // Updated to use 'r' for reading
                                     </ruby>
                                 )}
                             </span>
                             <p className="meanings">
-                                {entry.meanings.join(", ")}
+                                {entry.m.join(", ")} // Updated to use 'm' for meanings
                             </p>
-                            {(entry.tags || entry.frequency) && (
+                            {(entry.l || entry.o) && ( // Updated to use 'l' for tags and 'o' for frequency
                                 <div className="tags">
-                                    {getTagObjects(entry.tags).map((tag, idx) => (
+                                    {getTagObjects(entry.l).map((tag, idx) => ( // Updated to use 'l' for tags
                                         <span 
                                             key={idx} 
                                             className="tag" 
@@ -216,13 +216,13 @@ const SearchResults = ({ results }) => {
                                             {tag.tag}
                                         </span>
                                     ))}
-                                    {entry.frequency && (
+                                    {entry.o && ( // Updated to use 'o' for frequency
                                         <span 
                                             className="tag frequency" 
                                             title="Frequency rank"
-                                            style={{ backgroundColor: tagColors[`freq-${entry.frequency}`] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
+                                            style={{ backgroundColor: tagColors[`freq-${entry.o}`] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
                                         >
-                                            FR: {entry.frequency}
+                                            FR: {entry.o} // Updated to use 'o' for frequency
                                         </span>
                                     )}
                                 </div>
