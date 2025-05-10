@@ -27,7 +27,7 @@ const SearchResults = ({ results }) => {
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
-            const tagIds = entry.l.split(',').map(tag => tag.trim()).filter(tag => tag); // Updated to use 'l' for tags
+            const tagIds = entry.l.split(',').map(tag => tag.trim()).filter(tag => tag); 
             tagIds.forEach(tagId => {
                 const tag = tagBank.find(t => t.id === parseInt(tagId));
                 if (tag) {
@@ -45,7 +45,7 @@ const SearchResults = ({ results }) => {
         if (selectedTag) {
             // Filter by selected tag name
             setFilteredResults(results.filter(entry => 
-                entry.l.split(',').map(tag => tag.trim()).some(tagId => // Updated to use 'l' for tags
+                entry.l.split(',').map(tag => tag.trim()).some(tagId => 
                     tagBank.find(t => t.id === parseInt(tagId) && t.tag === selectedTag)
                 )
             ));
@@ -78,8 +78,8 @@ const SearchResults = ({ results }) => {
         });
         // Generate colors for frequency values
         results.forEach(entry => {
-            if (entry.o) { // Updated to use 'o' for frequency
-                colors[`freq-${entry.o}`] = generateColor(entry.o); // Updated to use 'o'
+            if (entry.o) { 
+                colors[`freq-${entry.o}`] = generateColor(entry.o); 
             }
         });
         setTagColors(colors);
@@ -165,11 +165,11 @@ const SearchResults = ({ results }) => {
                         <div key={index} className="entry">
                             <span className="result-number">{(currentPage - 1) * itemsPerPage + index + 1}. </span>
                             <span className="term-with-furigana">
-                                {entry.f ? ( // Updated to use 'f' for furigana
+                                {entry.f ? ( 
                                     entry.f.map((part, idx) =>
-                                        part.a ? ( // Updated to use 'a' for rt
+                                        part.a ? (
                                             <ruby key={idx}>
-                                                {part.b.split('').map((char, charIdx) => ( // Updated to use 'b' for ruby
+                                                {part.b.split('').map((char, charIdx) => ( 
                                                     <span 
                                                         key={`${idx}-${charIdx}`} 
                                                         className="kanji-char" 
@@ -179,15 +179,15 @@ const SearchResults = ({ results }) => {
                                                         {char}
                                                     </span>
                                                 ))}
-                                                <rt>{part.a}</rt> // Updated to use 'a' for rt
+                                                <rt>{part.a}</rt>
                                             </ruby>
                                         ) : (
-                                            part.b // Updated to use 'b' for ruby
+                                            part.b
                                         )
                                     )
                                 ) : (
                                     <ruby>
-                                        {entry.t.split('').map((char, charIdx) => ( // Updated to use 't' for term
+                                        {entry.t.split('').map((char, charIdx) => ( 
                                             <span 
                                                 key={charIdx} 
                                                 className="kanji-char" 
@@ -197,16 +197,16 @@ const SearchResults = ({ results }) => {
                                                 {char}
                                             </span>
                                         ))}
-                                        <rt>{entry.r}</rt> // Updated to use 'r' for reading
+                                        <rt>{entry.r}</rt> 
                                     </ruby>
                                 )}
                             </span>
                             <p className="meanings">
-                                {entry.m.join(", ")} // Updated to use 'm' for meanings
+                                {entry.m.join(", ")} 
                             </p>
-                            {(entry.l || entry.o) && ( // Updated to use 'l' for tags and 'o' for frequency
+                            {(entry.l || entry.o) && ( 
                                 <div className="tags">
-                                    {getTagObjects(entry.l).map((tag, idx) => ( // Updated to use 'l' for tags
+                                    {getTagObjects(entry.l).map((tag, idx) => ( 
                                         <span 
                                             key={idx} 
                                             className="tag" 
@@ -216,13 +216,13 @@ const SearchResults = ({ results }) => {
                                             {tag.tag}
                                         </span>
                                     ))}
-                                    {entry.o && ( // Updated to use 'o' for frequency
+                                    {entry.o && ( 
                                         <span 
                                             className="tag frequency" 
                                             title="Frequency rank"
                                             style={{ backgroundColor: tagColors[`freq-${entry.o}`] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
                                         >
-                                            FR: {entry.o} // Updated to use 'o' for frequency
+                                            FR: {entry.o} 
                                         </span>
                                     )}
                                 </div>

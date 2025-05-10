@@ -11,7 +11,7 @@ const App = () => {
     return (
         <BrowserRouter>
             <div className="main-container">
-                <h1>Japanese Dictionary</h1>
+                <h1 className="kanji-char">辞書</h1>
                 <SearchBar setResults={setResults} />
                 <SearchResults results={results} />
                 <Analytics />
