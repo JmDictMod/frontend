@@ -9,7 +9,7 @@ const SearchResults = ({ results }) => {
     const [selectedKanji, setSelectedKanji] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const [kanjiData, setKanjiData] = useState([]);
-    const [tagBank, setTagBank] = useState({});
+    const [tagBank, setTagBank] = useState([]);
 
     // Fetch kanji.json and tagbank.json data
     useEffect(() => {
@@ -20,22 +20,19 @@ const SearchResults = ({ results }) => {
 
         fetch('/tagbank.json')
             .then(response => response.json())
-            .then(data => {
-                const tagMap = {};
-                data.forEach(tag => {
-                    tagMap[tag.id] = tag.description;
-                });
-                setTagBank(tagMap);
-            })
+            .then(data => setTagBank(data))
             .catch(error => console.error('Error fetching tagbank data:', error));
     }, []);
 
     const countTagOccurrences = () => {
         const tagCounts = {};
         results.forEach(entry => {
-            const tags = entry.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-            tags.forEach(tag => {
-                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            const tagIds = entry.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            tagIds.forEach(tagId => {
+                const tag = tagBank.find(t => t.id === parseInt(tagId));
+                if (tag) {
+                    tagCounts[tag.tag] = (tagCounts[tag.tag] || 0) + 1;
+                }
             });
         });
         return tagCounts;
@@ -46,16 +43,18 @@ const SearchResults = ({ results }) => {
     useEffect(() => {
         setTagCounts(countTagOccurrences());
         if (selectedTag) {
-            // Filter by selected tag ID
+            // Filter by selected tag name
             setFilteredResults(results.filter(entry => 
-                entry.tags.split(',').map(tag => tag.trim()).includes(selectedTag)
+                entry.tags.split(',').map(tag => tag.trim()).some(tagId => 
+                    tagBank.find(t => t.id === parseInt(tagId) && t.tag === selectedTag)
+                )
             ));
         } else {
             // Use original results when "All Tags" is selected
             setFilteredResults(results);
         }
         setCurrentPage(1);
-    }, [results, selectedTag]);
+    }, [results, selectedTag, tagBank]);
 
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
@@ -122,6 +121,14 @@ const SearchResults = ({ results }) => {
     // Find the kanji details from kanjiData
     const selectedKanjiDetails = selectedKanji ? kanjiData.find(item => item.kanji === selectedKanji) : null;
 
+    // Convert tag IDs to tag objects for display
+    const getTagObjects = (tagString) => {
+        return tagString.split(',').map(tagId => {
+            const trimmedId = tagId.trim();
+            return tagBank.find(t => t.id === parseInt(trimmedId));
+        }).filter(tag => tag);
+    };
+
     return (
         <div id="search-results">
             <div className="results">
@@ -140,7 +147,7 @@ const SearchResults = ({ results }) => {
                     <option value="">All Tags</option>
                     {Object.entries(tagCounts).map(([tag, count]) => (
                         <option key={tag} value={tag}>
-                            {`${tag} (${count}) - ${tagBank[tag] || "No description available"}`}
+                            {`${tag} (${count}) - ${tagBank.find(t => t.tag === tag)?.description || "No description available"}`}
                         </option>
                     ))}
                 </select>
@@ -199,14 +206,14 @@ const SearchResults = ({ results }) => {
                             </p>
                             {(entry.tags || entry.frequency) && (
                                 <div className="tags">
-                                    {entry.tags && entry.tags.split(',').map((tag, idx) => (
+                                    {getTagObjects(entry.tags).map((tag, idx) => (
                                         <span 
                                             key={idx} 
                                             className="tag" 
-                                            title={tagBank[tag] || "No description available"}
-                                            style={{ backgroundColor: tagColors[tag] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
+                                            title={tag.description}
+                                            style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: '3px 8px', borderRadius: '4px', marginRight: '5px' }}
                                         >
-                                            {tag}
+                                            {tag.tag}
                                         </span>
                                     ))}
                                     {entry.frequency && (
