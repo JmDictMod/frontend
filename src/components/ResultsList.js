@@ -247,7 +247,7 @@ const SearchResults = ({ results }) => {
                                         >
                                             <span>More ({others.length})</span>
                                             <span style={{ fontSize: '16px', lineHeight: '1' }}>
-                                                {isExpanded ? 'minus' : 'plus'}
+                                                {isExpanded ? '➖' : '➕'}
                                             </span>
                                         </div>
                                     )}
