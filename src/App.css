@@ -111,14 +111,17 @@ body {
   }
 }
 
-/* === App shell: left ad rail | main content | right ad rail === */
+/* === App shell: left ad rail | main content | right ad rail ===
+   No max-width here on purpose: the shell spans the full viewport (like
+   the topbar above it) so the rails sit near the screen edges on large
+   monitors instead of leaving huge empty gutters. The center column's
+   own content (search bar, results) is what caps out at 1200px and
+   centers itself, via #search-results / .search-container. */
 .app-shell {
   display: grid;
   grid-template-columns: 1fr;
   align-items: start;
   gap: 18px;
-  max-width: 1680px;
-  margin: 0 auto;
   padding: 20px 14px;
 }
 
@@ -130,7 +133,7 @@ body {
 /* Vertical skyscraper rails only make sense once there's real room for them */
 @media (min-width: 1200px) {
   .app-shell {
-    grid-template-columns: minmax(140px, 170px) minmax(0, 1fr) minmax(140px, 170px);
+    grid-template-columns: minmax(140px, 220px) minmax(0, 1fr) minmax(140px, 220px);
   }
   .ad-rail {
     display: block;
