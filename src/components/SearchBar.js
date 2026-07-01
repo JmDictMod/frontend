@@ -6,7 +6,7 @@ const api = "https://apijmdictmod.vercel.app/api/search"; // Online server
 // const api = "http://localhost:5000/api/search"; // Local server
 
 const SearchBar = ({ setResults }) => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const initialQuery = searchParams.get("query") || "#conj"; // Default to "#conj" if no query is provided
@@ -17,7 +17,7 @@ const SearchBar = ({ setResults }) => {
     const [readingQuery, setReadingQuery] = useState("");
     const [mode, setMode] = useState(initialMode);
 
-    const isEnglish = (text) => /^[a-zA-Z0-9\s.,!?;:'"(){}\[\]\/\-]+$/.test(text);
+    const isEnglish = (text) => /^[a-zA-Z0-9\s.,!?;:'"(){}[\]/-]+$/.test(text);
 
     const handleSearch = async (overrideMode = null) => {
         let searchQuery = query;
@@ -51,11 +51,13 @@ const SearchBar = ({ setResults }) => {
     // Perform search on page load
     useEffect(() => {
         handleSearch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Run only once on mount
 
     // Perform search when mode changes
     useEffect(() => {
         handleSearch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode]); // Runs whenever the mode changes
 
     const handleKeyDown = (e) => {

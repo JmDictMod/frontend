@@ -49,6 +49,7 @@ const SearchResults = ({ results }) => {
             setFilteredResults(results);
         }
         setCurrentPage(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [results, selectedTag, tagBank]);
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
@@ -89,6 +90,7 @@ const SearchResults = ({ results }) => {
     useEffect(() => {
         document.addEventListener('click', handleOutsideClick);
         return () => document.removeEventListener('click', handleOutsideClick);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedKanji]);
     const selectedKanjiDetails = selectedKanji ? kanjiData.find(item => item.kanji === selectedKanji) : null;
     const getTagObjects = (tagString) => {
