@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+
 const SearchResults = ({ results }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [filteredResults, setFilteredResults] = useState(results);
@@ -10,6 +11,10 @@ const SearchResults = ({ results }) => {
     const [kanjiData, setKanjiData] = useState([]);
     const [tagBank, setTagBank] = useState([]);
     const [expandedGroups, setExpandedGroups] = useState(new Set());
+    const [showTags, setShowTags] = useState(() => localStorage.getItem('showTags') !== 'false');
+    useEffect(() => {
+        localStorage.setItem('showTags', String(showTags));
+    }, [showTags]);
     // Fetch data
     useEffect(() => {
         fetch('/kanji.json')
@@ -174,6 +179,14 @@ const SearchResults = ({ results }) => {
                     min="1"
                     max={filteredResults.length}
                 />
+                <label className="tag-toggle">
+                    <input
+                        type="checkbox"
+                        checked={showTags}
+                        onChange={(e) => setShowTags(e.target.checked)}
+                    />
+                    Show tags
+                </label>
             </div>
             {paginatedGroups.length > 0 ? (
                 <>
@@ -192,72 +205,26 @@ const SearchResults = ({ results }) => {
                                     selectedKanjiDetails={selectedKanjiDetails}
                                     selectedKanji={selectedKanji}
                                     dropdownPosition={dropdownPosition}
+                                    showTags={showTags}
                                 />
                             );
-                        }
-                        const { main, others, groupId } = groupItem;
-                        const isExpanded = expandedGroups.has(groupId);
-                        return (
-                            <div key={`group-${groupId}`} className="entry-group" style={{ marginBottom: '16px' }}>
-                                {/* Main Card with "More (X) plus/minus" inside */}
-                                <div style={{
-                                    backgroundColor: '#2a2a2a',
-                                    border: '1px solid #444',
-                                    borderRadius: '8px',
-                                    padding: '12px',
-                                    position: 'relative'
-                                }}>
-                                    <EntryRow
-                                        entry={main}
-                                        index={globalIndex}
-                                        handleKanjiClick={handleKanjiClick}
-                                        tagColors={tagColors}
-                                        getTagObjects={getTagObjects}
-                                        getFilteredReadings={getFilteredReadings}
-                                        selectedKanjiDetails={selectedKanjiDetails}
-                                        selectedKanji={selectedKanji}
-                                        dropdownPosition={dropdownPosition}
-                                        isMainInGroup
-                                    />
-                                    {/* "More (X) plus/minus" toggle */}
-                                    {others.length > 0 && (
-                                        <div
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                toggleGroup(groupId);
-                                            }}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '12px',
-                                                right: '12px',
-                                                backgroundColor: '#80CBC4',
-                                                color: '#000',
-                                                padding: '4px 8px',
-                                                borderRadius: '16px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px',
-                                                fontSize: '13px',
-                                                fontWeight: 'bold',
-                                                cursor: 'pointer',
-                                                userSelect: 'none',
-                                                boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
-                                            }}
-                                            title={`Show ${others.length} more meaning(s)`}
-                                        >
-                                            <span>More ({others.length})</span>
-                                            <span style={{ fontSize: '16px', lineHeight: '1' }}>
-                                                {isExpanded ? '➖' : '➕'}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                                {/* Expanded sub-items with auto numbering */}
-                                {isExpanded && others.map((entry, idx) => (
-                                    <div key={entry.o} style={{ marginLeft: '32px', marginTop: '8px' }}>
+                        } else {
+                            const { main, others, groupId } = groupItem;
+                            const isExpanded = expandedGroups.has(groupId);
+                            return (
+                                <div key={`group-${groupId}`} className="entry-group" style={{ marginBottom: '6px' }}>
+                                    {/* Main Card with "More (X) plus/minus" inside */}
+                                    <div style={{
+                                        backgroundColor: '#14161d',
+                                        border: '1px solid #262b38',
+                                        borderRadius: '12px',
+                                        padding: '8px 10px',
+                                        position: 'relative',
+                                        boxShadow: '0 4px 14px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
+                                    }}>
                                         <EntryRow
-                                            entry={entry}
-                                            index={`${idx + 2}`} // +2 because main is 1
+                                            entry={main}
+                                            index={globalIndex}
                                             handleKanjiClick={handleKanjiClick}
                                             tagColors={tagColors}
                                             getTagObjects={getTagObjects}
@@ -265,12 +232,64 @@ const SearchResults = ({ results }) => {
                                             selectedKanjiDetails={selectedKanjiDetails}
                                             selectedKanji={selectedKanji}
                                             dropdownPosition={dropdownPosition}
-                                            isSubItem
+                                            showTags={showTags}
+                                            isMainInGroup
                                         />
+                                        {/* "More (X) plus/minus" toggle */}
+                                        {others.length > 0 && (
+                                            <div
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleGroup(groupId);
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '8px',
+                                                    right: '8px',
+                                                    backgroundColor: '#4f8cff',
+                                                    color: '#06101f',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '999px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '6px',
+                                                    fontSize: '13px',
+                                                    fontWeight: 'bold',
+                                                    fontFamily: 'Inter, sans-serif',
+                                                    cursor: 'pointer',
+                                                    userSelect: 'none',
+                                                    boxShadow: '0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25)'
+                                                }}
+                                                title={`Show ${others.length} more meaning(s)`}
+                                            >
+                                                <span>More ({others.length})</span>
+                                                <span style={{ fontSize: '16px', lineHeight: '1' }}>
+                                                    {isExpanded ? '➖' : '➕'}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
-                            </div>
-                        );
+                                    {/* Expanded sub-items with auto numbering */}
+                                    {isExpanded && others.map((entry, idx) => (
+                                        <div key={entry.o} style={{ marginLeft: '32px', marginTop: '8px' }}>
+                                            <EntryRow
+                                                entry={entry}
+                                                index={`${idx + 2}`} // +2 because main is 1
+                                                handleKanjiClick={handleKanjiClick}
+                                                tagColors={tagColors}
+                                                getTagObjects={getTagObjects}
+                                                getFilteredReadings={getFilteredReadings}
+                                                selectedKanjiDetails={selectedKanjiDetails}
+                                                selectedKanji={selectedKanji}
+                                                dropdownPosition={dropdownPosition}
+                                                showTags={showTags}
+                                                isSubItem
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+                        }
                     })}
                     {/* Kanji Dropdown */}
                     {selectedKanji && (
@@ -347,11 +366,19 @@ const SearchResults = ({ results }) => {
                         </div>
                     )}
                     <div className="pagination">
-                        <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>First</button>
-                        <button onClick={() => handlePageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>Prev</button>
-                        <span>Page {currentPage} of {totalPages}</span>
-                        <button onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>Next</button>
-                        <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>Last</button>
+                        <button className="page-btn" onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+                            <span aria-hidden="true">«</span> First
+                        </button>
+                        <button className="page-btn" onClick={() => handlePageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
+                            <span aria-hidden="true">‹</span> Prev
+                        </button>
+                        <span className="page-indicator">Page <strong>{currentPage}</strong> of {totalPages}</span>
+                        <button className="page-btn" onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
+                            Next <span aria-hidden="true">›</span>
+                        </button>
+                        <button className="page-btn" onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
+                            Last <span aria-hidden="true">»</span>
+                        </button>
                     </div>
                 </>
             ) : (
@@ -361,63 +388,80 @@ const SearchResults = ({ results }) => {
     );
 };
 // === EntryRow Component ===
-const EntryRow = ({ 
-    entry, index, handleKanjiClick, tagColors, getTagObjects, getFilteredReadings, 
-    selectedKanjiDetails, selectedKanji, dropdownPosition, 
+const EntryRow = ({
+    entry, index, handleKanjiClick, tagColors, getTagObjects, getFilteredReadings,
+    selectedKanjiDetails, selectedKanji, dropdownPosition, showTags = true,
     isMainInGroup = false, isSubItem = false
 }) => {
     return (
         <div className="entry" style={{
             backgroundColor: isSubItem ? '#1e1e1e' : (isMainInGroup ? 'transparent' : 'inherit'),
-            padding: isSubItem ? '8px' : '0',
+            padding: isSubItem ? '6px 8px' : '8px 10px',
+            border: (isSubItem || isMainInGroup) ? 'none' : undefined,
+            boxShadow: (isSubItem || isMainInGroup) ? 'none' : undefined,
             borderRadius: '8px',
             marginBottom: isSubItem ? '4px' : '0',
             position: 'relative'
         }}>
-            {/* Show index only if provided */}
-            {index !== null && <span className="result-number">{index} </span>}
-            <span className="term-with-furigana">
-                {entry.f ? (
-                    entry.f.map((part, idx) => part.a ? (
-                        <ruby key={idx}>
-                            {part.b.split('').map((char, i) => (
-                                <span key={i} className="kanji-char" onClick={(e) => handleKanjiClick(char, e)} style={{ cursor: 'pointer' }}>
-                                    {char}
-                                </span>
-                            ))}
-                            <rt>{part.a}</rt>
-                        </ruby>
-                    ) : part.b)
-                ) : (
-                    <ruby>
-                        {entry.t.split('').map((char, i) => (
-                            <span key={i} className="kanji-char" onClick={(e) => handleKanjiClick(char, e)} style={{ cursor: 'pointer' }}>
-                                {char}
-                            </span>
-                        ))}
-                        <rt>{entry.r}</rt>
-                    </ruby>
+            <span className="entry-index">
+                {index !== null && (
+                    <span className={`entry-index-badge${isSubItem ? ' entry-index-badge-sub' : ''}`}>
+                        {index}
+                    </span>
                 )}
             </span>
-            <p className="meanings" style={{ margin: '4px 0', fontSize: isSubItem ? '14px' : '16px' }}>
-                {entry.m.join(", ")}
-            </p>
-            {(entry.l || entry.o) && (
-                <div className="tags" style={{ marginTop: '4px' }}>
-                    {getTagObjects(entry.l).map((tag, i) => (
-                        <span key={i} className="tag" title={tag.description}
-                            style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: '2px 6px', borderRadius: '4px', marginRight: '4px', fontSize: '12px' }}>
-                            {tag.tag}
-                        </span>
-                    ))}
-                    {entry.o && (
-                        <span className="tag frequency" title="Frequency rank"
-                            style={{ backgroundColor: tagColors[`freq-${entry.o}`] || "#ccc", color: "#fff", padding: '2px 6px', borderRadius: '4px', marginRight: '4px', fontSize: '12px' }}>
-                            FR: {entry.o}
-                        </span>
-                    )}
+            <div className="entry-content">
+                <div className="entry-term-row">
+                    <span className="term-with-furigana">
+                        {entry.f ? (
+                            entry.f.map((part, idx) => part.a ? (
+                                <span key={idx} className="furi-group">
+                                    <span className="furi-reading">{part.a}</span>
+                                    <span className="furi-base">
+                                        {part.b.split('').map((char, i) => (
+                                            <span key={i} className="kanji-char" onClick={(e) => handleKanjiClick(char, e)} style={{ cursor: 'pointer' }}>
+                                                {char}
+                                            </span>
+                                        ))}
+                                    </span>
+                                </span>
+                            ) : (
+                                <span key={idx} className="furi-plain">{part.b}</span>
+                            ))
+                        ) : (
+                            <span className="furi-group">
+                                <span className="furi-reading">{entry.r}</span>
+                                <span className="furi-base">
+                                    {entry.t.split('').map((char, i) => (
+                                        <span key={i} className="kanji-char" onClick={(e) => handleKanjiClick(char, e)} style={{ cursor: 'pointer' }}>
+                                            {char}
+                                        </span>
+                                    ))}
+                                </span>
+                            </span>
+                        )}
+                    </span>
                 </div>
-            )}
+                <p className="meanings" style={{ fontSize: isSubItem ? '14px' : '16px' }}>
+                    {entry.m.join(", ")}
+                </p>
+                {showTags && (entry.l || entry.o) && (
+                    <div className="tags">
+                        {getTagObjects(entry.l).map((tag, i) => (
+                            <span key={i} className="tag" title={tag.description}
+                                style={{ backgroundColor: tagColors[tag.tag] || "#ccc", color: "#fff", padding: '2px 6px', borderRadius: '4px', marginRight: '4px', fontSize: '12px' }}>
+                                {tag.tag}
+                            </span>
+                        ))}
+                        {entry.o && (
+                            <span className="tag frequency" title="Frequency rank"
+                                style={{ backgroundColor: tagColors[`freq-${entry.o}`] || "#ccc", color: "#fff", padding: '2px 6px', borderRadius: '4px', marginRight: '4px', fontSize: '12px' }}>
+                                FR: {entry.o}
+                            </span>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
