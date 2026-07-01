@@ -125,20 +125,32 @@ body {
   padding: 20px 14px;
 }
 
-.ad-rail {
+.side-rail {
   display: none;
   min-width: 0;
 }
 
-/* Vertical skyscraper rails only make sense once there's real room for them */
+/* Vertical skyscraper rails only make sense once there's real room for them.
+   Columns are pinned explicitly (not left to grid auto-placement) so that
+   if a browser/ad-blocker hides one rail, the main content can't get
+   shoved into its track — it stays put in the center column. */
 @media (min-width: 1200px) {
   .app-shell {
     grid-template-columns: minmax(140px, 220px) minmax(0, 1fr) minmax(140px, 220px);
   }
-  .ad-rail {
+  .side-rail {
     display: block;
     position: sticky;
     top: calc(var(--topbar-h) + 16px);
+  }
+  .side-rail-left {
+    grid-column: 1;
+  }
+  .main-container {
+    grid-column: 2;
+  }
+  .side-rail-right {
+    grid-column: 3;
   }
 }
 

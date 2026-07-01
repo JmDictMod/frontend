@@ -13,7 +13,7 @@ const App = () => {
         <BrowserRouter>
             <AppPromoHeader />
             <div className="app-shell">
-                <aside className="ad-rail ad-rail-left">
+                <aside className="side-rail side-rail-left">
                     <AppPromoSideBanner side="left" />
                 </aside>
                 <div className="main-container">
@@ -22,7 +22,7 @@ const App = () => {
                     <SearchResults results={results} />
                     <Analytics />
                 </div>
-                <aside className="ad-rail ad-rail-right">
+                <aside className="side-rail side-rail-right">
                     <AppPromoSideBanner side="right" />
                 </aside>
             </div>
