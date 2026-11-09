@@ -84,10 +84,37 @@ body {
   margin-top: 2px;
 }
 
-.app-promo-topbar-badge {
+.app-promo-topbar-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.app-promo-topbar-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.app-promo-store {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The Play image carries its own padding, so the App Store badge is drawn
+   smaller to look the same size beside it. */
+.app-promo-topbar-badges .app-promo-badge-play {
   height: 58px;
   width: auto;
-  flex-shrink: 0;
+}
+
+.app-promo-topbar-badges .app-promo-badge-apple {
+  height: 40px;
+  width: auto;
 }
 
 @media (max-width: 480px) {
@@ -106,8 +133,19 @@ body {
   .app-promo-topbar-text span {
     display: none;
   }
-  .app-promo-topbar-badge {
+  .app-promo-topbar-info {
+    gap: 12px;
+  }
+  /* Two badges and the name do not fit a phone's width: the icon and the
+     badges stay, the name is in the link's label. */
+  .app-promo-topbar-text {
+    display: none;
+  }
+  .app-promo-topbar-badges .app-promo-badge-play {
     height: 46px;
+  }
+  .app-promo-topbar-badges .app-promo-badge-apple {
+    height: 32px;
   }
 }
 
@@ -579,8 +617,37 @@ select {
   min-height: 0;
 }
 
-.app-promo-side-badge {
+.app-promo-side-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  text-decoration: none;
+}
+
+.app-promo-side-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.app-promo-side-badges .app-promo-store {
+  width: 100%;
+  justify-content: center;
+}
+
+.app-promo-side-badges .app-promo-badge-apple {
+  width: 86%;
+  height: auto;
+}
+
+.app-promo-side-badges .app-promo-badge-play {
   width: 100%;
   height: auto;
-  flex-shrink: 0;
 }
